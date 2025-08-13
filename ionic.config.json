@@ -1,0 +1,7 @@
+{
+  "name": "contractor-review",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
