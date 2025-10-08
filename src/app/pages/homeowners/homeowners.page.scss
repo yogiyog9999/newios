@@ -1,0 +1,266 @@
+.list-ios{
+  background: #fff;
+}
+ion-card:hover {
+  transform: none;
+}
+.consumer-search {
+  --background: #fafafa;
+  padding: 12px;
+}
+
+.search-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.filter-item {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  --min-height: 48px;
+  --padding-start: 10px;
+}
+
+.search-btn {
+  --background: #ff5722;
+  --border-radius: 12px;
+  margin-top: 8px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.section-title {
+  margin: 12px 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.review-card {
+  border-radius: 10px;
+  box-shadow:none;
+  background: #FCE8CF;
+    margin: 15px 0;
+    border:none;
+    padding:25px 20px;
+}
+
+.card-content-ios{padding:0;}
+.hname{color:#EF6229;}
+
+.review-card h4 {
+  margin: 0 0 8px;
+  font-size: 1.0625rem;
+  font-weight: 600;
+    text-transform: capitalize;
+}
+
+.review-card p {
+  margin: 2px 0 10px;
+  font-size: 0.9rem;
+  color:#474747;
+}
+
+.review-card .rating {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.review-card .rating ion-icon {
+  font-size: 16px;
+}
+.search-bar {
+  display: flex;
+  align-items: center;
+  padding:0px;
+
+  ion-searchbar {
+    flex: 1;
+  }
+
+  ion-button {
+    margin-left: 8px;
+  }
+  .sc-ion-searchbar-ios-h{padding:0}
+}
+
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 12px 12px;
+
+  ion-chip {
+    background: #f2f2f2;
+  }
+
+  ion-button {
+    margin-left: auto;
+    font-size: 0.8rem;
+  }
+}
+.results-count {
+  padding:6px 0;
+  font-size: 0.9rem;
+  color: #444;
+
+  p {
+    margin: 4px 0;
+  }
+}
+
+
+.main-container {
+  padding: 16px;
+  background: #fff;
+}
+
+/* 🔝 Top Bar */
+.search-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: #222;
+  }
+
+  ion-button {
+    --color: #f15a29;
+    --padding-start: 0;
+    --padding-end: 0;
+    font-size: 20px;
+  }
+}
+
+/* 🧩 Filters Panel */
+.filters {
+  margin-bottom: 16px;
+
+  ion-item {
+    --background: #fff;
+    --border-color: #ddd;
+    --border-radius: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    font-size: 15px;
+
+    ion-icon {
+      color: #f15a29;
+      font-size: 18px;
+    }
+  }
+
+  ion-button {
+    --background: #f15a29;
+    --background-activated: #d94d20;
+    --border-radius: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    height: 48px;
+    text-transform: none;
+    box-shadow: 0 4px 8px rgba(241, 90, 41, 0.3);
+  }
+}
+
+/* 🟠 Active Filters Summary */
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+
+  ion-chip {
+    --background: #fff4ef;
+    --color: #f15a29;
+    font-size: 13px;
+    border-radius: 8px;
+    ion-icon {
+      color: #f15a29;
+      cursor: pointer;
+    }
+  }
+
+  ion-button {
+    --color: #f15a29;
+    font-size: 13px;
+  }
+}
+
+/* 📊 Results Count */
+.results-count {
+  margin-bottom: 12px;
+
+  p {
+    font-size: 14px;
+    color: #555;
+    margin: 0;
+
+    strong {
+      color: #f15a29;
+    }
+  }
+}
+
+/* ⏳ Spinner */
+.spinner-center {
+  display: block;
+  margin: 40px auto;
+  --color: #f15a29;
+}
+
+/* 📝 Review Cards */
+.review-card {
+  background: #fff4ef;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  ion-card-content {
+    padding: 14px;
+
+    .hname {
+      font-size: 16px;
+      font-weight: 700;
+      color: #f15a29;
+      margin: 0 0 4px 0;
+    }
+
+    p {
+      margin: 2px 0;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .stars {
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      ion-icon {
+        font-size: 18px;
+      }
+
+      span {
+        font-size: 14px;
+        font-weight: 600;
+        color: #222;
+      }
+    }
+  }
+}
