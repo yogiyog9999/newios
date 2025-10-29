@@ -31,8 +31,8 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
-            "scripts": []
+            "styles": ["src/global.scss", "src/theme/variables.scss","node_modules/leaflet/dist/leaflet.css","node_modules/leaflet.markercluster/dist/MarkerCluster.css","node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css","src/styles.scss"],
+            "scripts": ["node_modules/leaflet/dist/leaflet.js","node_modules/leaflet.markercluster/dist/leaflet.markercluster.js"]
           },
           "configurations": {
             "production": {

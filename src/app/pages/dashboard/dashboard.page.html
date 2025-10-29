@@ -20,11 +20,11 @@
       </button>
       <button class="action-btn" routerLink="/tabs/write">
         <ion-icon name="pencil-outline"></ion-icon>
-        Write Review
+        Write a Review
       </button>
       <button class="action-btn" (click)="goHomeowners()">
   <ion-icon name="home-outline"></ion-icon>
-  Consumers
+  Search Reviews
 </button>
     </div>
 
@@ -57,7 +57,7 @@
           (click)="openReviewDetails(review.reviewid)"
         >
           <h5>{{ review.name }}</h5>
-          <p>Project Type: {{ review.projectType }}</p>
+          <p>Service Type: {{ review.projectType }}</p>
           <p>Latest review posted on {{ review.projectDate }}</p>
           <div class="stars">
             <ion-icon *ngFor="let s of [1,2,3,4,5]" 

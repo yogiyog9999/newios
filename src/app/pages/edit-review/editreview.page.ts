@@ -22,7 +22,27 @@ export class EditreviewPage implements OnInit {
   files: File[] = []; // newly selected files
   existingFiles: { name: string; url: string }[] = []; // preloaded files
   services: any[] = [];
+  selectedState: string = '';
+selectedCity: string = '';
+filteredCities: string[] = [];
 
+  states = [
+  { name: 'California', cities: ['Los Angeles', 'San Francisco', 'San Diego', 'Sacramento', 'San Jose'] },
+  { name: 'Texas', cities: ['Houston', 'Dallas', 'Austin', 'San Antonio', 'Fort Worth'] },
+  { name: 'Florida', cities: ['Miami', 'Orlando', 'Tampa', 'Jacksonville', 'Tallahassee'] },
+  { name: 'New York', cities: ['New York City', 'Buffalo', 'Rochester', 'Albany', 'Syracuse'] },
+  { name: 'Illinois', cities: ['Chicago', 'Springfield', 'Peoria', 'Rockford', 'Naperville'] },
+  { name: 'Ohio', cities: ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Akron'] },
+  { name: 'Pennsylvania', cities: ['Philadelphia', 'Pittsburgh', 'Allentown', 'Erie', 'Scranton'] },
+  { name: 'Georgia', cities: ['Atlanta', 'Savannah', 'Augusta', 'Columbus', 'Macon'] },
+  { name: 'North Carolina', cities: ['Charlotte', 'Raleigh', 'Greensboro', 'Durham', 'Winston-Salem'] },
+  { name: 'Washington', cities: ['Seattle', 'Spokane', 'Tacoma', 'Vancouver', 'Bellevue'] },
+  { name: 'Colorado', cities: ['Denver', 'Colorado Springs', 'Aurora', 'Fort Collins', 'Boulder'] },
+  { name: 'Michigan', cities: ['Detroit', 'Grand Rapids', 'Ann Arbor', 'Lansing', 'Flint'] },
+  { name: 'Arizona', cities: ['Phoenix', 'Tucson', 'Mesa', 'Scottsdale', 'Tempe'] },
+  { name: 'Massachusetts', cities: ['Boston', 'Cambridge', 'Worcester', 'Springfield', 'Lowell'] },
+  { name: 'Nevada', cities: ['Las Vegas', 'Reno', 'Henderson', 'Carson City', 'Sparks'] }
+];
   ratingCategories = [
     { key: 'rating_payment', label: 'Payment Timeliness', model: 0 },
     { key: 'rating_communication', label: 'Communication', model: 0 },
@@ -68,7 +88,12 @@ export class EditreviewPage implements OnInit {
       this.zip = review.zip;
       this.project_date = review.project_date;
       this.comments = review.comments;
-
+      this.selectedState = review.state || '';
+      this.selectedCity = review.city || '';
+	  if (this.selectedState) {
+  const stateData = this.states.find(s => s.name === this.selectedState);
+  this.filteredCities = stateData ? stateData.cities : [];
+}
       this.ratingCategories.forEach(cat => {
         cat.model = review[cat.key] || 0;
       });
@@ -146,6 +171,8 @@ export class EditreviewPage implements OnInit {
         project_type: this.project_type,
         address: this.address,
         zip: this.zip,
+		state: this.selectedState,
+        city: this.selectedCity,
         project_date: this.project_date || null,
         comments: this.comments,
         files: JSON.stringify(finalFiles)
@@ -175,4 +202,10 @@ export class EditreviewPage implements OnInit {
     const toast = await this.toastCtrl.create({ message, duration: 2500, color });
     toast.present();
   }
+   onStateChange(event: any) {
+  const selectedState = event.detail.value;
+  const stateData = this.states.find(s => s.name === selectedState);
+  this.filteredCities = stateData ? stateData.cities : [];
+  this.selectedCity = '';
+}
 }

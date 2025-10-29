@@ -63,7 +63,38 @@ const routes: Routes = [
  { 
   path: 'reset-password', 
   loadChildren: () => import('./pages/reset-password/reset-password.module').then(m => m.ResetPasswordPageModule) 
+},
+{
+    path: 'admin',
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('./pages/admin/admin-dashboard/admin-dashboard.module').then(
+            m => m.AdminDashboardPageModule
+          )
+      },
+      {
+        path: 'manage-users',
+        loadChildren: () =>
+          import('./pages/admin/manage-users/manage-users.module').then(
+            m => m.ManageUsersPageModule
+          )
+      },
+      {
+        path: 'manage-reviews',
+        loadChildren: () =>
+          import('./pages/admin/manage-reviews/manage-reviews.module').then(
+            m => m.ManageReviewsPageModule
+          )
+      }
+    ]
+  },
+{
+  path: 'admin/add-user',
+  loadChildren: () => import('./pages/admin/add-users/add-user.module').then(m => m.AddUserPageModule)
 }
+
 
 
   

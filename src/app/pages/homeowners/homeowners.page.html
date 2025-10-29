@@ -25,7 +25,7 @@
 
       <ion-item>
         <ion-icon slot="start" name="construct-outline"></ion-icon>
-        <ion-select [(ngModel)]="proj" placeholder="Project Type">
+        <ion-select [(ngModel)]="proj" placeholder="Service Type">
           <ion-select-option *ngFor="let s of services" [value]="s.name">{{ s.name }}</ion-select-option>
         </ion-select>
       </ion-item>
@@ -79,6 +79,24 @@
 
     <!-- Results List -->
     <ion-spinner *ngIf="loading" class="spinner-center"></ion-spinner>
+     <div class="view-toggle">
+  <ion-segment [(ngModel)]="viewMode" (ionChange)="onViewModeChange()">
+    <ion-segment-button value="list">
+      <ion-label>List</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="map">
+      <ion-label>Map</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+</div>
+
+<!-- Map Container -->
+<div [class.hidden]="viewMode !== 'map'" class="map-container">
+  <div id="reviewMap" style="height: 400px;"></div>
+
+  <ion-spinner *ngIf="mapLoading" class="map-loader"></ion-spinner>
+  <div *ngIf="mapLoading" class="map-overlay">Loading map…</div>
+</div>
 
     <ion-list *ngIf="!loading && results.length > 0">
       <ion-card class="review-card"
@@ -86,7 +104,7 @@
         (click)="openReviewDetails(r.id)">
         <ion-card-content>
           <h4 class="hname">{{ r.homeowner_name || 'Homeowner' }}</h4>
-          <p><strong>Project Type: {{ r.project_type }}</strong></p>
+          <p><strong>Service Type: {{ r.project_type }}</strong></p>
           <p>Latest review posted on {{ r.project_date | date:'MM/dd/yyyy' }}</p>
           <div class="stars">
             <ion-icon *ngFor="let star of [1,2,3,4,5]"
@@ -99,6 +117,11 @@
         </ion-card-content>
       </ion-card>
     </ion-list>
-
+<div class="pagination-container" *ngIf="!loading && results.length > 0 && hasMore">
+  <ion-button expand="block" fill="outline" (click)="loadMore()">
+    Load More
+  </ion-button>
+</div>
   </div>
 </ion-content>
+

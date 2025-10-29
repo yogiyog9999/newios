@@ -15,12 +15,22 @@ export class RegisterPage {
   lastName = '';
   password = '';
   confirmPassword = '';
-  acceptTerms='';
+  acceptTerms = false;
   loading = false;
   error = '';
   showPassword = false;
-showConfirmPassword = false;
+  showConfirmPassword = false;
 
+  // Password strength variables
+  strengthPercent = 0;
+  strengthText = '';
+  strengthColor: 'danger' | 'warning' | 'success' | 'medium' = 'medium';
+  strengthClass = '';
+  
+  uppercaseRegex: RegExp = /[A-Z]/;
+lowercaseRegex: RegExp = /[a-z]/;
+numberRegex: RegExp = /\d/;
+specialCharRegex: RegExp = /[!@#$%^&*(),.?":{}|<>]/;  
   constructor(
     private auth: AuthService,
     private router: Router,
@@ -29,69 +39,120 @@ showConfirmPassword = false;
     private loadingCtrl: LoadingController
   ) {}
 
+  togglePassword(field: 'password' | 'confirm') {
+    if (field === 'password') this.showPassword = !this.showPassword;
+    else this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  checkPasswordStrength() {
+    const password = this.password || '';
+    let score = 0;
+
+    if (password.length >= 12) score += 1;
+    if (/[A-Z]/.test(password)) score += 1;
+    if (/[a-z]/.test(password)) score += 1;
+    if (/\d/.test(password)) score += 1;
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score += 1;
+
+    this.strengthPercent = (score / 5) * 100;
+
+    if (score <= 2) {
+      this.strengthText = 'Weak';
+      this.strengthColor = 'danger';
+      this.strengthClass = 'strength-weak';
+    } else if (score === 3 || score === 4) {
+      this.strengthText = 'Medium';
+      this.strengthColor = 'warning';
+      this.strengthClass = 'strength-medium';
+    } else if (score === 5) {
+      this.strengthText = 'Strong';
+      this.strengthColor = 'success';
+      this.strengthClass = 'strength-strong';
+    }
+  }
+
   async register() {
     this.error = '';
 
-    // ✅ confirm password validation
+    // ✅ Password validation
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{12,}$/;
+
+    if (!passwordRegex.test(this.password)) {
+      this.error =
+        'Password must be at least 12 characters long and include uppercase, lowercase, number, and special character.';
+      return;
+    }
+
+    // ✅ Confirm password
     if (this.password !== this.confirmPassword) {
       this.error = 'Passwords do not match';
       return;
     }
 
-    this.loading = true;
+    // ✅ Terms
+    if (!this.acceptTerms) {
+      this.error = 'Please accept the terms and conditions.';
+      return;
+    }
 
+    this.loading = true;
     const loader = await this.loadingCtrl.create({
       message: 'Creating account...',
       spinner: 'crescent'
     });
     await loader.present();
-try {
-  const { user } = await this.auth.signUp(this.email, this.password, this.firstName, this.lastName);
-  await loader.dismiss();
 
-  if (user) {
-    if (!user.identities || user.identities.length === 0) {
-      // Already registered
-      if (!user.email_confirmed_at) {
-        // ❌ Registered but not verified → show resend option
-		console.log("✅ Verified");
-        const alert = await this.alertCtrl.create({
-          header: 'Email Not Verified',
-          message: 'This email is already registered but not verified. Would you like us to resend the verification link?',
-          buttons: [
-            { text: 'Cancel', role: 'cancel' },
-            {
-              text: 'Resend Link',
-              handler: async () => {
-                try {
-                  await this.auth.resendVerificationEmail(this.email);
-                  this.showToast('Verification email sent again! 📩', 'success');
-                } catch (err: any) {
-                  this.showToast(err.message || 'Failed to resend verification email', 'danger');
+    try {
+      const { user } = await this.auth.signUp(
+        this.email,
+        this.password,
+        this.firstName,
+        this.lastName
+      );
+      await loader.dismiss();
+
+      if (user) {
+        if (!user.identities || user.identities.length === 0) {
+          if (!user.email_confirmed_at) {
+            const alert = await this.alertCtrl.create({
+              header: 'Email Not Verified',
+              message:
+                'This email is already registered but not verified. Would you like us to resend the verification link?',
+              buttons: [
+                { text: 'Cancel', role: 'cancel' },
+                {
+                  text: 'Resend Link',
+                  handler: async () => {
+                    try {
+                      await this.auth.resendVerificationEmail(this.email);
+                      this.showToast('Verification email sent again! 📩', 'success');
+                    } catch (err: any) {
+                      this.showToast(
+                        err.message || 'Failed to resend verification email',
+                        'danger'
+                      );
+                    }
+                  }
                 }
-              }
-            }
-          ]
-        });
-        await alert.present();
-      } else {
-        // ✅ Already registered & verified → block with error
-		console.log("✅ notVerified");
-        this.error = 'This email is already registered. Please login instead.';
-        this.showAlert('Registration Failed', this.error);
-      }
-      return;
-    }
+              ]
+            });
+            await alert.present();
+          } else {
+            this.error = 'This email is already registered. Please login instead.';
+            this.showAlert('Registration Failed', this.error);
+          }
+          return;
+        }
 
-    // ✅ Fresh registration
-    await this.showAlert(
-      'Verify Your Email',
-      'Registration successful! Please check your inbox to verify your email before logging in.'
-    );
-    this.router.navigate(['/auth/login']);
-  }
-} 
- catch (e: any) {
+        await this.showAlert(
+  'Verify Your Email',
+  'Registration successful! Please check your inbox (and also your Spam or Junk folder) to verify your email before logging in.'
+);
+
+        this.router.navigate(['/auth/login']);
+      }
+    } catch (e: any) {
       await loader.dismiss();
       this.error = e.message || 'Registration failed';
       this.showAlert('Registration Failed', this.error);
@@ -122,12 +183,17 @@ try {
     });
     await alert.present();
   }
-  togglePassword(field: 'password' | 'confirm') {
-  if (field === 'password') {
-    this.showPassword = !this.showPassword;
-  } else {
-    this.showConfirmPassword = !this.showConfirmPassword;
-  }
+  getPasswordHintColor(regex: RegExp): string {
+  return regex.test(this.password) ? 'green' : 'red';
 }
-  
+allPasswordHintsPassed(): boolean {
+  return (
+    this.password.length >= 12 &&
+    this.uppercaseRegex.test(this.password) &&
+    this.lowercaseRegex.test(this.password) &&
+    this.numberRegex.test(this.password) &&
+    this.specialCharRegex.test(this.password)
+  );
+}
+
 }
