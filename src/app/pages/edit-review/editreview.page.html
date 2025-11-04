@@ -14,7 +14,7 @@
     <!-- Address -->
     <ion-item lines="none" class="input-item">
       <ion-icon name="home-outline" slot="start"></ion-icon>
-      <ion-input placeholder="Address" [(ngModel)]="address" required></ion-input>
+     <ion-input #autocompleteAddress placeholder="Enter address" [(ngModel)]="address"   type="text"> </ion-input>
     </ion-item>
 
     <!-- Zip -->
@@ -25,21 +25,15 @@
 	 <!-- State -->
 <ion-item lines="none" class="input-item">
   <ion-icon name="flag-outline" slot="start"></ion-icon>
-  <ion-select placeholder="Select State" [(ngModel)]="selectedState" (ionChange)="onStateChange($event)" required>
-    <ion-select-option *ngFor="let state of states" [value]="state.name">
-      {{ state.name }}
-    </ion-select-option>
+  <ion-select [(ngModel)]="selectedState">
+    <ion-select-option *ngFor="let s of stateList" [value]="s">{{ s }}</ion-select-option>
   </ion-select>
 </ion-item>
 
 <!-- City -->
 <ion-item lines="none" class="input-item">
   <ion-icon name="business-outline" slot="start"></ion-icon>
-  <ion-select placeholder="Select City" [(ngModel)]="selectedCity" required>
-    <ion-select-option *ngFor="let city of filteredCities" [value]="city">
-      {{ city }}
-    </ion-select-option>
-  </ion-select>
+  <ion-input [(ngModel)]="selectedCity" placeholder="City"></ion-input>
 </ion-item>
 
     <!-- Project Type -->

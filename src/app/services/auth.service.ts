@@ -245,4 +245,56 @@ export class AuthService {
     if (error) throw error;
     return data as UserPreferences;
   }
+  
+  
+  async saveFcmToken(userId: string, token: string) {
+  // Check if a token already exists for this user
+  const { data: existing, error: fetchError } = await supabase
+    .from('user_tokens')
+    .select('id')
+    .eq('user_id', userId)
+    .single();
+
+  if (fetchError && fetchError.code !== 'PGRST116') {
+    // PGRST116 = no record found
+    throw fetchError;
+  }
+
+  if (existing) {
+    // update existing token
+    const { error: updateError } = await supabase
+      .from('user_tokens')
+      .update({
+        fcm_token: token,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId);
+
+    if (updateError) throw updateError;
+  } else {
+    // insert new record
+    const { error: insertError } = await supabase
+      .from('user_tokens')
+      .insert({
+        user_id: userId,
+        fcm_token: token,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
+    if (insertError) throw insertError;
+  }
+
+  console.log('✅ FCM token saved for user:', userId);
+}
+async removeFcmToken(userId: string) {
+  const { error } = await supabase
+    .from('user_tokens')
+    .delete()
+    .eq('user_id', userId);
+
+  if (error) throw error;
+  console.log('🔕 FCM token removed for user:', userId);
+}
+
 }

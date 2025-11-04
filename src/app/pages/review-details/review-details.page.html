@@ -23,7 +23,27 @@
       </div>
     </div>
 
+ <ion-card *ngFor="let review of reviews">
+  <ion-item *ngIf="!review.hide_name" lines="none" class="review-card">
+    <ion-avatar slot="start">
+      <img [src]="review.profile_image_url || 'assets/logo.png'" />
+    </ion-avatar>
+    <ion-label>
+      <h2>
+        <a [routerLink]="['/contractor', review.contractor_id]">
+          {{ review.first_name }} {{ review.last_name }}
+        </a>
+      </h2>
+      <p>{{ review.project_type }}</p>
+    </ion-label>
+  </ion-item>
+
+  
+    
+</ion-card>
+
     <!-- Summary Box -->
+	
     <div class="summary-box" *ngIf="reviews.length > 0">
       <div class="summary-item">
         <ion-icon name="star" color="warning"></ion-icon>

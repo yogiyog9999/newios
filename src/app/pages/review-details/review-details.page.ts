@@ -16,7 +16,7 @@ export class ReviewDetailsPage implements OnInit {
   hideNameOnReviews = false;
   allowPushNotifications = false;
   currentUserId: string | null = null;
-
+homeowner_name: string | null = null;
   isLoading: boolean = true; // <-- loading state
 
   constructor(
@@ -24,79 +24,82 @@ export class ReviewDetailsPage implements OnInit {
     private auth: AuthService
   ) {}
 
-  async ngOnInit() {
-    this.isLoading = true;
-    try {
-      const user = await this.auth.currentUser();
-      if (user) {
-        this.currentUserId = user.id;
-        const prefs = await this.auth.getPreferences(user.id);
-        this.hideNameOnReviews = prefs?.hide_name ?? false;
-        this.allowPushNotifications = prefs?.allow_push ?? false;
-      }
+async ngOnInit() {
+  this.isLoading = true;
+  try {
+    // 1️⃣ Get currently logged-in user
+    const user = await this.auth.currentUser();
+    this.currentUserId = user?.id || null;
 
-      const homeownerName = this.route.snapshot.paramMap.get('homeownerName') || '';
+    const homeownerName = this.route.snapshot.paramMap.get('homeownerName') || '';
 
-      // Fetch reviews for this homeowner
-      this.reviews = await this.auth.getAllReviews(homeownerName);
+    // 2️⃣ Fetch all reviews for this homeowner
+    this.reviews = await this.auth.getAllReviews(homeownerName);
 
-      // Fetch contractor names + compute avg per review
-      for (let review of this.reviews) {
-        const contractor = await this.auth.getContractorById(review.contractor_id);
-        review.contractor_name = contractor?.business_name || 'Unknown Contractor';
-        review.profile_image_url = contractor?.profile_image_url || 'assets/logo.png';
-        review.first_name = contractor?.first_name || '';
-        review.last_name = contractor?.last_name || '';
-        // Compute avg score from ratings
-        const ratings = [
-          review.rating_payment,
-          review.rating_communication,
-          review.rating_scope,
-          review.rating_change_orders,
-          review.rating_overall
-        ].map(Number).filter(n => !isNaN(n));
+    // 3️⃣ Enrich each review with contractor info + preferences
+    for (let review of this.reviews) {
+      const contractor = await this.auth.getContractorById(review.contractor_id);
 
-        review.avg_score = ratings.length
-          ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
-          : null;
-      }
+      review.contractor_name = contractor?.business_name || 'Unknown Contractor';
+      review.profile_image_url = contractor?.profile_image_url || 'assets/logo.png';
+      review.first_name = contractor?.first_name || '';
+      review.last_name = contractor?.last_name || '';
 
-      if (this.reviews.length > 0) {
-        this.homeowner = {
-          name: this.reviews[0].homeowner_name,
-          address: this.reviews[0].address,
-          project_type: this.reviews[0].project_type,
-          project_date: this.reviews[0].project_date,
-          zip: this.reviews[0].zip,
-          rating_overall: this.reviews[0].rating_overall,
-          comments: this.reviews[0].comments,
-          files: this.reviews[0].files
-        };
-      }
+      // ✅ Fetch that contractor's preferences, not the current user's
+      const prefs = await this.auth.getPreferences(review.contractor_id);
+      review.hide_name = prefs?.hide_name ?? true;
 
-      // compute overall average across all reviews
-      const allRatings: number[] = [];
-      this.reviews.forEach(r => {
-        const ratings = [
-          r.rating_payment,
-          r.rating_communication,
-          r.rating_scope,
-          r.rating_change_orders,
-          r.rating_overall
-        ].map(Number).filter(n => !isNaN(n));
-        allRatings.push(...ratings);
-      });
+      // Compute average rating
+      const ratings = [
+        review.rating_payment,
+        review.rating_communication,
+        review.rating_scope,
+        review.rating_change_orders,
+        review.rating_overall
+      ].map(Number).filter(n => !isNaN(n));
 
-      this.overallAvg = allRatings.length
-        ? (allRatings.reduce((a, b) => a + b, 0) / allRatings.length).toFixed(1)
+      review.avg_score = ratings.length
+        ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
         : null;
-
-    } catch (err) {
-      console.error('Error loading review details:', err);
-    } finally {
-      this.isLoading = false; // hide loader
     }
+
+    // 4️⃣ Extract homeowner info (from the first review)
+    if (this.reviews.length > 0) {
+      this.homeowner = {
+        name: this.reviews[0].homeowner_name,
+        address: this.reviews[0].address,
+        project_type: this.reviews[0].project_type,
+        project_date: this.reviews[0].project_date,
+        zip: this.reviews[0].zip,
+        rating_overall: this.reviews[0].rating_overall,
+        comments: this.reviews[0].comments,
+        files: this.reviews[0].files
+      };
+    }
+
+    // 5️⃣ Compute overall average across all reviews
+    const allRatings: number[] = [];
+    this.reviews.forEach(r => {
+      const ratings = [
+        r.rating_payment,
+        r.rating_communication,
+        r.rating_scope,
+        r.rating_change_orders,
+        r.rating_overall
+      ].map(Number).filter(n => !isNaN(n));
+      allRatings.push(...ratings);
+    });
+
+    this.overallAvg = allRatings.length
+      ? (allRatings.reduce((a, b) => a + b, 0) / allRatings.length).toFixed(1)
+      : null;
+
+  } catch (err) {
+    console.error('Error loading review details:', err);
+  } finally {
+    this.isLoading = false;
   }
+}
 
   getFileIcon(url: string): string {
     if (!url) return 'document-outline';
