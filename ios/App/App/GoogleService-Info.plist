@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyB5MccOxRQkU0YkYvWnB_b4ZGZ0W6kUuAU</string>
+	<string>AIzaSyCEtWFCHQoDhR55ztgvYqAQE9dk_mUnMiM</string>
 	<key>GCM_SENDER_ID</key>
-	<string>592532422584</string>
+	<string>702713496290</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.app.dlist</string>
 	<key>PROJECT_ID</key>
-	<string>dlist-ios</string>
+	<string>dlist-app</string>
 	<key>STORAGE_BUCKET</key>
-	<string>dlist-ios.firebasestorage.app</string>
+	<string>dlist-app.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:592532422584:ios:28e6dc092c86b06250194d</string>
+	<string>1:702713496290:ios:726d74b4d7ad78e5ec14bb</string>
 </dict>
 </plist>
